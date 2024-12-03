@@ -43,14 +43,6 @@ defmodule AdventOfCode do
   end
 
   def red_nose_reports() do
-    reports = [
-     [7, 6, 4, 2, 1],
-     [1, 2, 7, 8, 9],
-     [9, 7, 6, 2, 1],
-     [1, 3, 2, 4, 5],
-     [8, 6, 4, 4, 1],
-     [1, 3, 6, 7, 9],
-    ]
     reports =
       File.read!("red_nose_reports.txt")
       |> String.split("\n", trim: true)
@@ -69,8 +61,27 @@ defmodule AdventOfCode do
     end)
     IO.puts("Number of safe reports: #{safe_reports}")
   end
+
+  def check_corruption(line) do
+    regex = ~r/mul\((\d{1,3}),(\d{1,3})\)/
+    Regex.scan(regex, line)
+    |> Enum.map(fn [_, a, b] ->
+      String.to_integer(a) * String.to_integer(b)
+    end) |> Enum.sum()
+  end
+
+  def mull_it_over() do
+    # corrupted_memory = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"
+    result = File.read!("mull_it_over.txt")
+      |> String.split("\n", trim: true)
+      |> Enum.map(fn line ->
+          check_corruption(line)
+      end) |> Enum.sum()
+    IO.puts(result)
+  end
 end
 
 # total_distance = AdventOfCode.historian_hysteria()
 # IO.puts("La distance totale est : #{total_distance}")
-AdventOfCode.red_nose_reports()
+# AdventOfCode.red_nose_reports()
+AdventOfCode.mull_it_over()
