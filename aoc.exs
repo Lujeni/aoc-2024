@@ -161,10 +161,48 @@ defmodule AdventOfCode do
         end
     end
   end
+
+  def print_queue() do
+    input = File.read!("print_queue_1.txt")
+    [rules_section, updates_section] = String.split(input, "\n\n")
+
+    rules =
+      rules_section
+      |> String.split("\n", trim: true)
+      |> Enum.map(fn rule ->
+        [a, b] = String.split(rule, "|") |> Enum.map(&String.to_integer/1)
+        {a, b}
+      end)
+
+    updates =
+      updates_section
+      |> String.split("\n", trim: true)
+      |> Enum.map(fn line ->
+        line
+        |> String.split(",", trim: true)
+        |> Enum.map(&String.to_integer/1)
+      end)
+
+    updates
+    |> Enum.filter(fn update -> is_valid_order?(update, rules) end)
+    |> Enum.map(fn update -> Enum.at(update, div(length(update), 2)) end)
+    |> Enum.sum()
+  end
+
+  defp is_valid_order?(update, rules) do
+    Enum.all?(rules, fn {a, b} ->
+      if a in update and b in update do
+        Enum.find_index(update, &(&1 == a)) < Enum.find_index(update, &(&1 == b))
+      else
+        true
+      end
+    end)
+  end
 end
 
 # total_distance = AdventOfCode.historian_hysteria()
 # IO.puts("La distance totale est : #{total_distance}")
 # AdventOfCode.red_nose_reports()
 # AdventOfCode.mull_it_over()
-AdventOfCode.ceres_search() |> IO.puts()
+# AdventOfCode.ceres_search() |> IO.puts
+AdventOfCode.print_queue() |> IO.puts()
