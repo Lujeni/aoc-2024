@@ -1,5 +1,5 @@
 defmodule BridgeRepair do
-  @operators [:+, :*]
+  @operators [:+, :*, :||]
 
   defp reduce_combo(length) do
     Enum.reduce(1..length, [[]], fn _, acc ->
@@ -15,6 +15,7 @@ defmodule BridgeRepair do
       case op do
         :+ -> num1 + num2
         :* -> num1 * num2
+        :|| -> String.to_integer("#{num1}#{num2}")
       end
 
     apply_combo([result | rest], ops)
